@@ -15,13 +15,12 @@ static byte mydns[] =   {192, 168, 1, 1 };
 static byte gateway[] = {192, 168, 1, 1 };
 static byte subnet[]  = {255, 255, 255, 0 };
 
-EthernetServer server(23);;
+EthernetServer server(23);
 EthernetClient client;
 boolean clientConnected = false;
 //unsigned long timeOfConnection = 0;
 //unsigned int timeout = 10000;
 
-//Relais sind invertiert: HIGH = OFF, LOW = ON
 int pwrButton = 2;
 int pwrSupply = 3;
 int ledVoltage = A0;
@@ -32,7 +31,6 @@ char command[cmdlength] = "";
 void setup()
 {
   Serial.begin(9600);
-  //while(!Serial) {;}
   
   pinMode(pwrButton, OUTPUT);
   pinMode(pwrSupply, OUTPUT);
@@ -53,7 +51,6 @@ void loop()
     if (!clientConnected) {
       client.flush(); // clear out the input buffer:
       Serial.println("We have a new client");
-      client.println("Hello, client!");
       clientConnected = true;
 //    timeOfConnection = millis();
     }
@@ -69,15 +66,23 @@ void loop()
       i++;
     }
     Serial.print(command);
-    if(command[0]=='p' && command[1]=='w' && command[2]=='r' && command[3]=='b' && command[4]=='t' && command[5]=='n' && command[6]==' '
-        && command[7]>48 && command[7]<58 ) {
+    if (compareCharArray(command, "pwrbtn ", 7) && command[7]>48 && command[7]<58 ) {
       pwrbtn((command[7]-48)*1000);
     }
-    else if (command[0]=='s' && command[1]=='t' && command[2]=='a' && command[3]=='t') {
+    else if (compareCharArray(command, "stat", 4)) {
       led_voltage();
     } else unknown();
     server.print(">");
   }
+}
+
+//This fuction compares if the begin of two char arrays are equal
+boolean compareCharArray(char a[], char b[], int length_of_b) {
+  boolean temp = true;
+  for(int i = 0; i < length_of_b; i++) {
+    if(a[i] != b[i]) temp = false;
+  }
+  return temp;
 }
 
 void pwrbtn(int x) {
