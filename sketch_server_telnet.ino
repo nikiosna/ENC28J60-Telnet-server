@@ -15,11 +15,11 @@ static byte mydns[] =   {192, 168, 1, 1 };
 static byte gateway[] = {192, 168, 1, 1 };
 static byte subnet[]  = {255, 255, 255, 0 };
 
-static unsigned int timeout = 10000; //30s connection time
 EthernetServer server(23);;
 EthernetClient client;
 boolean clientConnected = false;
-unsigned long timeOfConnection = 0;
+//unsigned long timeOfConnection = 0;
+//unsigned int timeout = 10000;
 
 //Relais sind invertiert: HIGH = OFF, LOW = ON
 int pwrButton = 2;
@@ -55,7 +55,7 @@ void loop()
       Serial.println("We have a new client");
       client.println("Hello, client!");
       clientConnected = true;
-      timeOfConnection = millis();
+//    timeOfConnection = millis();
     }
     /*else if(millis() > (timeOfConnection + timeout)) {
       server.println("You timed out!");
