@@ -1,4 +1,4 @@
-//ENC28J60 Telnet-server (for powercontroll of a pc)
+//ENC28J60 Telnet-server (for powercontrol of a pc)
 //By Nikiosna
 //Based upon
 //https://github.com/ntruchsess/arduino_uip
@@ -89,7 +89,8 @@ void pwrbtn(int x) {
 }
 
 void led_voltage() {
-   voltage = (double)analogRead(ledVoltage);
+   voltage = (float)analogRead(ledVoltage);
+   voltage = (voltage/1024)*5.0;
    server.print("LED-voltage is: ");
    server.print(voltage);
    server.println("V");
