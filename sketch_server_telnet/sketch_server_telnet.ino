@@ -8,7 +8,7 @@
 
 #include <UIPEthernet.h>
 
-#define cmdlength 12
+#define CMDLENGTH 12
 
 static byte mac[6] =    {0x00, 0x01, 0x02, 0x03, 0x04, 0x05};
 static byte ip[]  =     {192, 168, 1, 90 };
@@ -27,7 +27,7 @@ int pwrSupply = 3;
 int ledVoltage = A0;
 
 float voltage = 0.0;
-char command[cmdlength] = "";
+char command[CMDLENGTH] = "";
 
 void setup()
 {
@@ -51,40 +51,64 @@ void loop()
   client = server.available();
   if (client) {
     if (!clientConnected) {
-      client.flush(); // clear out the input buffer:
-      Serial.println("We have a new client");
+      client.flush();
       clientConnected = true;
       //timeOfConnection = millis();
+      
+      help();
+      server.print(">");
     }
     /*else if(millis() > (timeOfConnection + timeout)) {
       server.println("You timed out!");
-      client.stop();
+      disconnect();
       clientConnected = false;
       Serial.println("Client dropped!");
     }*/
     int i = 0;
-    while (client.available() > 0 && i < cmdlength) {
+    while (client.available() > 0 && i < CMDLENGTH) {
       command[i] = client.read();
       i++;
     }
     Serial.print(command);
-    if (compareCharArray(command, "pwrbtn ", 7) && command[7]>48 && command[7]<58 ) {
-      pwrbtn((command[7]-48)*1000);
+    
+    if(containsCR(command)) {
+      //Add commands here
+      
+      //pwrbtn "number between 1 and 9" (0 in ASCII is 48 ... and 9 is 57)
+      if (compare(command, "pwrbtn ", 7) && command[7]>48 && command[7]<58 ) {
+        pwrbtn((command[7]-48)*1000);
+      }
+      
+      else if (compare(command, "stat", 4)) {
+        led_voltage();
+      }
+      
+      else if (compare(command, "quit", 4) || compare(command, "exit", 4)) {
+        memset(command, 0, CMDLENGTH); //delete the command
+        client.stop();
+        clientConnected = false;
+      }
+      
+      else help();
+      server.print(">");
     }
-    else if (compareCharArray(command, "stat", 4)) {
-      led_voltage();
-    } else unknown();
-    server.print(">");
   }
 }
 
 //This fuction compares if the begin of two char arrays are equal
-boolean compareCharArray(char a[], char b[], int length_of_b) {
-  boolean temp = true;
+boolean compare(char a[], char b[], int length_of_b) {
   for(int i = 0; i < length_of_b; i++) {
-    if(a[i] != b[i]) temp = false;
+    if(a[i] != b[i]) return false;
   }
-  return temp;
+  return true;
+}
+
+//This fuction tests if the chararray a contains a carriage return
+boolean containsCR(char a[]) {
+  for(int i = 0; i < CMDLENGTH; i++) {
+    if(a[i] == (char)13) return true;
+  }
+  return false;
 }
 
 void pwrbtn(int x) {
@@ -103,8 +127,9 @@ void led_voltage() {
    server.println("V");
 }
 
-void unknown() {
+void help() {
   server.println("> Avaible commands:");
   server.println("pwrbtn [s]  | press the powerbutton [x] s");
   server.println("stat        | reads the voltage of the powerLED");
+  server.println("exit / quit | close the telnet-session");
 }
