@@ -95,7 +95,7 @@ void loop()
   }
 }
 
-//This fuction compares if the begin of two char arrays are equal
+//compares if the begin of two char arrays are equal
 boolean compare(char a[], char b[], int length_of_b) {
   for(int i = 0; i < length_of_b; i++) {
     if(a[i] != b[i]) return false;
@@ -103,7 +103,7 @@ boolean compare(char a[], char b[], int length_of_b) {
   return true;
 }
 
-//This fuction tests if the chararray a contains a carriage return
+//tests if the chararray a contains a carriage return
 boolean containsCR(char a[]) {
   for(int i = 0; i < CMDLENGTH; i++) {
     if(a[i] == (char)13) return true;
@@ -132,4 +132,5 @@ void help() {
   server.println("pwrbtn [s]  | press the powerbutton [x] s");
   server.println("stat        | reads the voltage of the powerLED");
   server.println("exit / quit | close the telnet-session");
+  delay(500);
 }
