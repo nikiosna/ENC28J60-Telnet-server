@@ -84,7 +84,6 @@ void loop()
       }
       
       else if (compare(command, "quit", 4) || compare(command, "exit", 4)) {
-        memset(command, 0, CMDLENGTH); //delete the command
         client.stop();
         clientConnected = false;
       }
@@ -92,6 +91,7 @@ void loop()
       else help();
       server.print(">");
     }
+    memset(command, 0, CMDLENGTH); //delete the command
   }
 }
 
