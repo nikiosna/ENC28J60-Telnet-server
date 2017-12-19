@@ -71,7 +71,7 @@ void loop()
     }
     Serial.print(command);
     
-    if(containsCR(command)) {
+    if(containsCRLF(command)) {
       //Add commands here
       
       //pwrbtn "number between 1 and 9" (0 in ASCII is 48 ... and 9 is 57)
@@ -103,10 +103,10 @@ boolean compare(char a[], char b[], int length_of_b) {
   return true;
 }
 
-//tests if the chararray a contains a carriage return
-boolean containsCR(char a[]) {
+//tests if the chararray a contains a carriage return or line feed
+boolean containsCRLF(char a[]) {
   for(int i = 0; i < CMDLENGTH; i++) {
-    if(a[i] == (char)13) return true;
+    if(a[i] == (char)13 || a[i] == (char)10) return true;
   }
   return false;
 }
