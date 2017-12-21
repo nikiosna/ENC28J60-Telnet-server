@@ -11,16 +11,16 @@
 #define CMDLENGTH 12
 
 static byte mac[6] =    {0x00, 0x01, 0x02, 0x03, 0x04, 0x05};
-static byte ip[]  =     {192, 168, 1, 90 };
-static byte mydns[] =   {192, 168, 1, 1 };
-static byte gateway[] = {192, 168, 1, 1 };
+static byte ip[]  =     {192, 168, 2, 42 };
+static byte mydns[] =   {192, 168, 2, 1 };
+static byte gateway[] = {192, 168, 2, 1 };
 static byte subnet[]  = {255, 255, 255, 0 };
 
 EthernetServer server(23);
 EthernetClient client;
 boolean clientConnected = false;
-//unsigned long timeOfConnection = 0;
-//unsigned int timeout = 10000;
+unsigned long timeOfConnection = 0;
+unsigned int timeout = 60000; //1minute
 
 int pwrButton = 2;
 int pwrSupply = 3;
@@ -53,17 +53,17 @@ void loop()
     if (!clientConnected) {
       client.flush();
       clientConnected = true;
-      //timeOfConnection = millis();
+      timeOfConnection = millis();
       
       help();
       server.print(">");
     }
-    /*else if(millis() > (timeOfConnection + timeout)) {
+    else if(millis() > (timeOfConnection + timeout)) {
       server.println("You timed out!");
-      disconnect();
+      client.stop();
       clientConnected = false;
-      Serial.println("Client dropped!");
-    }*/
+      Serial.println("Timeout!");
+    }
     int i = 0;
     while (client.available() > 0 && i < CMDLENGTH) {
       command[i] = client.read();
